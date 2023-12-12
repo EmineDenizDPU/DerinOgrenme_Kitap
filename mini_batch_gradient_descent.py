@@ -1,0 +1,46 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Veri seti oluştur
+np.random.seed(42)
+X = 2 * np.random.rand(100, 1)
+y = 4 + 3 * X + np.random.randn(100, 1)
+
+# Parametreler
+learning_rate = 0.01
+n_iterations = 1000
+batch_size = 20
+m = len(X)
+
+# Model parametreleri
+theta = np.random.randn(2, 1)
+X_b = np.c_[np.ones((m, 1)), X]  # Bias eklenmiş X matrisi
+
+# Mini Batch Gradient Descent
+for iteration in range(n_iterations):
+    shuffled_indices = np.random.permutation(m)
+    X_b_shuffled = X_b[shuffled_indices]
+    y_shuffled = y[shuffled_indices]
+    
+    for i in range(0, m, batch_size):
+        xi = X_b_shuffled[i:i+batch_size]
+        yi = y_shuffled[i:i+batch_size]
+        gradients = 2/batch_size * xi.T.dot(xi.dot(theta) - yi)
+        theta = theta - learning_rate * gradients
+
+# Eğitim sonrası theta değerleri
+print("Eğitim sonrası theta değerleri:")
+print(theta)
+
+# Modeli test etmek için örnek bir giriş
+X_new = np.array([[0], [2]])
+X_new_b = np.c_[np.ones((2, 1)), X_new]  # Bias eklenmiş X matrisi
+y_predict = X_new_b.dot(theta)
+
+# Sonuçları görselleştir
+plt.plot(X, y, "b.")
+plt.plot(X_new, y_predict, "r-", linewidth=2, label="Tahmin")
+plt.xlabel("X")
+plt.ylabel("y")
+plt.legend()
+plt.show()
